@@ -8,6 +8,7 @@ import Board from "./board";
 import Scoreboard from "./scoreboard";
 import MediaControls from "./mediaControls";
 import Logo from "./logo";
+import Explain from "./explain";
 import { breakpoints, colors, themes } from "../theme";
 
 const PageWrapper = styled("div")`
@@ -196,6 +197,7 @@ class Game extends React.Component {
                 theme={this.props.theme}
               />
               <Ruleset>Game Ruleset: {this.props.ruleset.name}</Ruleset>
+              <Explain currentFrame={currentFrame} outer_props={this.props} />
             </ScoreboardWrapper>
           )}
         </GameBoardWrapper>

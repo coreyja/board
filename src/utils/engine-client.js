@@ -1,6 +1,6 @@
 import { streamAll } from "../io/websocket";
 import { makeQueryString, httpToWsProtocol, join } from "./url";
-import { loadSvgs, getSvg, svgExists } from "./inline-svg";
+import { loadSvgs, getSvg, svgExists, makeDom } from "./inline-svg";
 import { isLastFrameOfGame } from "./game-state";
 
 const DEFAULT_SNAKE_HEAD = "default";
@@ -82,8 +82,14 @@ async function setHeadAndTailSvgs(snakes) {
   await loadSvgs(getAllSvgs(snakes));
 
   for (const snake of snakes) {
-    snake.HeadSvg = getSvg(snake.HeadType);
-    snake.TailSvg = getSvg(snake.TailType);
+    snake.HeadSvg = getSvg(
+      snake.HeadType,
+      '<svg id="root" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle fill="none" cx="12.52" cy="28.55" r="9.26"/><path d="M0 100h100L56 55.39l44-39.89V.11L0 0zm12.52-80.71a9.26 9.26 0 1 1-9.26 9.26 9.26 9.26 0 0 1 9.26-9.26z"/></svg>'
+    );
+    snake.TailSvg = getSvg(
+      snake.TailType,
+      '<svg id="root" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M50 0H0v100h50l50-50L50 0z"/></svg>'
+    );
   }
 }
 

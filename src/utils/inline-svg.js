@@ -26,7 +26,10 @@ export function loadSvgs(paths) {
   return Promise.all(paths.map(requireSvg));
 }
 
-export function getSvg(path) {
+export function getSvg(path, default_svg) {
+  if (!loaded[path]) {
+    loaded[path] = makeDom(default_svg);
+  }
   return loaded[path];
 }
 
@@ -39,14 +42,16 @@ function requireSvg(path) {
 }
 
 async function fetchSvg(path) {
-  const response = await fetch(path);
-  const svgText = await response.text();
-  const svg = makeDom(svgText);
-  loaded[path] = svg;
-  return svg;
+  try {
+    const response = await fetch(path);
+    const svgText = await response.text();
+    const svg = makeDom(svgText);
+    loaded[path] = svg;
+    return svg;
+  } catch {}
 }
 
-function makeDom(svgText) {
+export function makeDom(svgText) {
   const wrapper = document.createElement("div");
   wrapper.innerHTML = svgText.trim();
   return wrapper.firstChild;
@@ -71,6 +76,7 @@ export async function svgExists(path) {
   } catch (e) {
     //Most likely a CORS issue for a specific svg
     console.warn(e, path, "Fallback to default");
+    doesntExist[path] = true;
     return false;
   }
 }
