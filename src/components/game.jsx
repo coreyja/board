@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "@emotion/styled";
 
 import BlankState from "./blank-state";
@@ -112,98 +112,96 @@ const Ruleset = styled("p")`
   text-transform: capitalize;
 `;
 
-class Game extends React.Component {
-  componentDidMount() {
-    const { options } = this.props;
+function Game(props) {
+  const { options } = props;
 
-    if (options.boardTheme) {
-      this.props.toggleTheme(options.boardTheme);
-    }
-
-    if (options.game && options.engine) {
-      this.hideLogo = options.hideLogo === "true";
-      this.hideScoreboard = options.hideScoreboard === "true";
-      this.title = options.title && decodeURIComponent(options.title);
-      this.props.setGameOptions(options);
-      this.props.fetchFrames();
-    } else {
-      this.invalidArgs = true;
-    }
+  if (options.boardTheme) {
+    props.toggleTheme(options.boardTheme);
   }
 
-  render() {
-    if (this.invalidArgs) {
-      return <BlankState />;
-    }
+  const [explainState, setExplainState] = useState();
 
-    if (this.props.gameNotFound) {
-      return <GameNotFound />;
-    }
+  useEffect(() => {
+    props.setGameOptions(options);
+    props.fetchFrames();
+  }, []);
 
-    if (this.props.currentFrame) {
-      return this.renderGame();
-    }
+  if (!(options.game && options.engine)) {
+    return <BlankState />;
+  }
 
+  const hideLogo = options.hideLogo === "true";
+  const hideScoreboard = options.hideScoreboard === "true";
+  const title = options.title && decodeURIComponent(options.title);
+
+  if (props.gameNotFound) {
+    return <GameNotFound />;
+  }
+
+  if (!props.currentFrame) {
     return <LoadingIndicator />;
   }
 
-  renderGame() {
-    const { currentFrame, options } = this.props;
-    return (
-      <PageWrapper theme={this.props.theme}>
-        <GameBoardWrapper>
-          <BoardWrapper hideScoreboard={this.hideScoreboard}>
-            <BoardTitle theme={this.props.theme}>{this.title}</BoardTitle>
-            <Board
+  const { currentFrame } = props;
+  return (
+    <PageWrapper theme={props.theme}>
+      <GameBoardWrapper>
+        <BoardWrapper hideScoreboard={hideScoreboard}>
+          <BoardTitle theme={props.theme}>{title}</BoardTitle>
+          <Board
+            snakes={currentFrame.snakes}
+            food={currentFrame.food}
+            foodImage={options.foodImage}
+            hazards={currentFrame.hazards}
+            columns={props.grid.width}
+            rows={props.grid.height}
+            highlightedSnake={props.highlightedSnake}
+            theme={props.theme}
+            turn={currentFrame.turn}
+          />
+          <MediaControls
+            currentFrame={currentFrame}
+            hideControls={options.hideMediaControls === "true"}
+            toggleTheme={props.toggleTheme}
+            reloadGame={props.reloadGame}
+            toggleGamePause={props.toggleGamePause}
+            stepBackwardFrame={props.stepBackwardFrame}
+            stepForwardFrame={props.stepForwardFrame}
+            paused={props.paused}
+            theme={props.theme}
+          />
+        </BoardWrapper>
+        {!hideScoreboard && (
+          <ScoreboardWrapper>
+            <HeaderWrapper>
+              {!hideLogo && (
+                <LogoWrapper>
+                  <Logo theme={props.theme} />
+                </LogoWrapper>
+              )}
+              <TurnCount theme={props.theme}>
+                Turn <TurnCountValue>{currentFrame.turn}</TurnCountValue>
+              </TurnCount>
+            </HeaderWrapper>
+            <Scoreboard
+              turn={currentFrame.turn}
               snakes={currentFrame.snakes}
               food={currentFrame.food}
-              foodImage={options.foodImage}
-              hazards={currentFrame.hazards}
-              columns={this.props.grid.width}
-              rows={this.props.grid.height}
-              highlightedSnake={this.props.highlightedSnake}
-              theme={this.props.theme}
-              turn={currentFrame.turn}
+              highlightSnake={props.highlightSnake}
+              theme={props.theme}
             />
-            <MediaControls
+            <Ruleset>Game Ruleset: {props.ruleset.name}</Ruleset>
+            <Explain
               currentFrame={currentFrame}
-              hideControls={options.hideMediaControls === "true"}
-              toggleTheme={this.props.toggleTheme}
-              reloadGame={this.props.reloadGame}
-              toggleGamePause={this.props.toggleGamePause}
-              stepBackwardFrame={this.props.stepBackwardFrame}
-              stepForwardFrame={this.props.stepForwardFrame}
-              paused={this.props.paused}
-              theme={this.props.theme}
+              outer_props={props}
+              setExplainState={setExplainState}
             />
-          </BoardWrapper>
-          {!this.hideScoreboard && (
-            <ScoreboardWrapper>
-              <HeaderWrapper>
-                {!this.hideLogo && (
-                  <LogoWrapper>
-                    <Logo theme={this.props.theme} />
-                  </LogoWrapper>
-                )}
-                <TurnCount theme={this.props.theme}>
-                  Turn <TurnCountValue>{currentFrame.turn}</TurnCountValue>
-                </TurnCount>
-              </HeaderWrapper>
-              <Scoreboard
-                turn={currentFrame.turn}
-                snakes={currentFrame.snakes}
-                food={currentFrame.food}
-                highlightSnake={this.props.highlightSnake}
-                theme={this.props.theme}
-              />
-              <Ruleset>Game Ruleset: {this.props.ruleset.name}</Ruleset>
-              <Explain currentFrame={currentFrame} outer_props={this.props} />
-            </ScoreboardWrapper>
-          )}
-        </GameBoardWrapper>
-      </PageWrapper>
-    );
-  }
+          </ScoreboardWrapper>
+        )}
+      </GameBoardWrapper>
+      {explainState && JSON.stringify(explainState)}
+    </PageWrapper>
+  );
 }
 
 export default Game;

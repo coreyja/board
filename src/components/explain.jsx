@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { convertState } from "../utils/explain";
 
-export default function Explain({ currentFrame, outer_props }) {
+export default function Explain({
+  currentFrame,
+  outer_props,
+  setExplainState
+}) {
   const snakeUrl = "http://localhost:8000/devious-devin/explain";
+
+  useEffect(() => {
+    setExplainState(undefined);
+  }, [currentFrame.turn]);
 
   const onClick = async () => {
     const newGameState = convertState(
@@ -26,7 +34,7 @@ export default function Explain({ currentFrame, outer_props }) {
       body: JSON.stringify(newGameState)
     });
 
-    console.log(await result.json());
+    setExplainState(await result.json());
   };
 
   return (
