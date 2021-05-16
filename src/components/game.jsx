@@ -158,6 +158,7 @@ function Game(props) {
             highlightedSnake={props.highlightedSnake}
             theme={props.theme}
             turn={currentFrame.turn}
+            explainState={explainState}
           />
           <MediaControls
             currentFrame={currentFrame}

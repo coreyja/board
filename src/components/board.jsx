@@ -21,6 +21,7 @@ class Board extends React.Component {
           x={0}
           y={0}
           turn={this.props.turn}
+          explainState={this.props.explainState}
         />
       </svg>
     );
