@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
+
 import { convertState } from "../utils/explain";
+
+import ReactJson from "react-json-view";
 
 export default function Explain({
   currentFrame,
   outer_props,
+  explainState,
   setExplainState
 }) {
   const snakeUrl = "http://localhost:8000/devious-devin/explain";
@@ -39,8 +43,14 @@ export default function Explain({
 
   return (
     <>
-      Lets do some explaining{" "}
-      <button onClick={onClick}>Explain Devin to Me</button>
+      Lets do some explaining <button onClick={onClick}>Explain Devin</button>
+      {explainState && (
+        <ReactJson
+          src={explainState}
+          style={{ maxHeight: "35vh", overflowX: "scroll" }}
+          collapsed={3}
+        />
+      )}
     </>
   );
 }

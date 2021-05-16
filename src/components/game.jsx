@@ -195,11 +195,11 @@ function Game(props) {
               currentFrame={currentFrame}
               outer_props={props}
               setExplainState={setExplainState}
+              explainState={explainState}
             />
           </ScoreboardWrapper>
         )}
       </GameBoardWrapper>
-      {explainState && JSON.stringify(explainState)}
     </PageWrapper>
   );
 }
