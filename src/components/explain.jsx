@@ -24,7 +24,7 @@ export default function Explain({
       outer_props.grid.width,
       outer_props.grid.height,
       currentFrame,
-      "gs_MXxcS3WCBVJKQQBcjWc7pVbS"
+      "devious-devin"
     );
 
     const result = await fetch(snakeUrl, {

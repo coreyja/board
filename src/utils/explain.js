@@ -26,13 +26,13 @@ export function convertState(
   width,
   height,
   frame,
-  snakeId
+  snakeName
 ) {
   // Only grab alive snakes
   const snakes = frame.snakes
     .filter(snake => snake.death == null)
     .map(convertSnake);
-  const you = snakes.find(snake => snake.id == snakeId);
+  const you = snakes.find(snake => snake.name == snakeName);
 
   if (!you) {
     throw new Error("The snake is already dead");
