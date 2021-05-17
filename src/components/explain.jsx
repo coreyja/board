@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
+import cloneDeep from "lodash.clonedeep";
 
 import { convertState } from "../utils/explain";
 
 import ReactJson from "react-json-view";
+import { sortBy } from "lodash";
+
+const COLORS = ["red", "green", "blue", "purple"];
 
 export default function Explain({
   currentFrame,
@@ -15,6 +19,8 @@ export default function Explain({
   useEffect(() => {
     setExplainState(undefined);
   }, [currentFrame.turn]);
+
+  const explainOptions = explainState && explainState.options;
 
   const onClick = async () => {
     const newGameState = convertState(
@@ -37,20 +43,48 @@ export default function Explain({
       //make sure to serialize your JSON body
       body: JSON.stringify(newGameState)
     });
+    const newExplainState = await result.json();
 
-    setExplainState(await result.json());
+    newExplainState.options.map((option, i) => {
+      option.color = COLORS[i];
+      option.selected = true;
+    });
+
+    newExplainState.options = sortBy(
+      newExplainState.options,
+      option => -option.score
+    );
+
+    setExplainState(newExplainState);
   };
 
   return (
     <>
       Lets do some explaining <button onClick={onClick}>Explain Devin</button>
-      {explainState && (
-        <ReactJson
-          src={explainState}
-          style={{ maxHeight: "35vh", overflowX: "scroll" }}
-          collapsed={3}
-        />
-      )}
+      {explainOptions &&
+        explainOptions.map((option, i) => (
+          <>
+            <br />
+            <label style={{ color: option.color }}>
+              Dir: {option.moves[0].dir}
+              Score: {option.score}
+              <input
+                type="checkbox"
+                key={i}
+                checked={option.selected}
+                onChange={() =>
+                  setExplainState(oldState => {
+                    const newState = cloneDeep(oldState);
+                    newState.options[i].selected = !oldState.options[i]
+                      .selected;
+
+                    return newState;
+                  })
+                }
+              />
+            </label>
+          </>
+        ))}
     </>
   );
 }

@@ -266,8 +266,6 @@ function isOverlappedByTail(snake, part) {
   return part.isOverlapped && head.x === part.x && head.y === part.y;
 }
 
-const COLORS = ["red", "green", "blue", "purple"];
-
 class Grid extends React.Component {
   renderPart(snake, snakeIndex, part, partIndex) {
     if (isOverlappedByTail(snake, part)) return;
@@ -560,33 +558,35 @@ class Grid extends React.Component {
         ))}
 
         {this.props.explainState &&
-          this.props.explainState.options.map((explainOption, i) => (
-            <>
-              <text
-                key={"option" + i}
-                x={toGridSpaceX(explainOption.moves[0].move_to.x)}
-                y={toGridSpaceY(explainOption.moves[0].move_to.y) + CELL_SIZE}
-                width={CELL_SIZE / 2}
-                height={CELL_SIZE / 2}
-                fill={COLORS[i]}
-                shapeRendering="optimizeSpeed"
-              >
-                {explainOption.score}
-              </text>
-              {explainOption.moves.map((o, hazardIndex) => (
-                <rect
-                  key={"hazard" + hazardIndex}
-                  x={toGridSpaceX(o.move_to.x)}
-                  y={toGridSpaceY(o.move_to.y)}
-                  width={CELL_SIZE}
-                  height={CELL_SIZE}
-                  fill={COLORS[i]}
-                  fillOpacity={hazardOpacity}
+          this.props.explainState.options
+            .filter(option => option.selected)
+            .map((explainOption, i) => (
+              <>
+                <text
+                  key={"option" + i}
+                  x={toGridSpaceX(explainOption.moves[0].move_to.x)}
+                  y={toGridSpaceY(explainOption.moves[0].move_to.y) + CELL_SIZE}
+                  width={CELL_SIZE / 2}
+                  height={CELL_SIZE / 2}
+                  fill={explainOption.color}
                   shapeRendering="optimizeSpeed"
-                />
-              ))}
-            </>
-          ))}
+                >
+                  {explainOption.score}
+                </text>
+                {explainOption.moves.map((o, hazardIndex) => (
+                  <rect
+                    key={"hazard" + hazardIndex}
+                    x={toGridSpaceX(o.move_to.x)}
+                    y={toGridSpaceY(o.move_to.y)}
+                    width={CELL_SIZE}
+                    height={CELL_SIZE}
+                    fill={explainOption.color}
+                    fillOpacity={colors.hazardOpacity}
+                    shapeRendering="optimizeSpeed"
+                  />
+                ))}
+              </>
+            ))}
       </svg>
     );
   }
