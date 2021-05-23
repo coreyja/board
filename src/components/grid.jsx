@@ -571,7 +571,7 @@ class Grid extends React.Component {
                   fill={explainOption.color}
                   shapeRendering="optimizeSpeed"
                 >
-                  {explainOption.score}
+                  {Object.keys(explainOption.score)[0]}
                 </text>
                 {explainOption.moves.map((o, hazardIndex) => (
                   <rect

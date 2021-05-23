@@ -60,14 +60,14 @@ export default function Explain({
 
   return (
     <>
-      Lets do some explaining <button onClick={onClick}>Explain Devin</button>
+      <button onClick={onClick}>Explain Devin</button>
       {explainOptions &&
         explainOptions.map((option, i) => (
           <>
             <br />
             <label style={{ color: option.color }}>
               Dir: {option.moves[0].dir}
-              Score: {option.score}
+              Score: {JSON.stringify(option.score)}
               <input
                 type="checkbox"
                 key={i}
