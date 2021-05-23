@@ -66,7 +66,7 @@ export default function Explain({
           <>
             <br />
             <label style={{ color: option.color }}>
-              Dir: {option.moves[0].dir}
+              Dir: {option.dir}
               Score: {JSON.stringify(option.score)}
               <input
                 type="checkbox"
