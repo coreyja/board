@@ -1,0 +1,12 @@
+.error-message {
+    margin-top: 3pt;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+}
+
+/*# sourceMappingURL=main.a0901978.chunk.css.map*/
